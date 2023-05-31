@@ -1,20 +1,21 @@
 import { useEffect, useRef } from 'react';
 import * as pdfjsLib from "pdfjs-dist";
 import PropTypes from "prop-types";
+import jsPDF from "jspdf";
 
 PdfViewer.propTypes = {
     path: PropTypes.string,
     setPdfPosition: PropTypes.func,
-    imageData: PropTypes.shape({
-        src: PropTypes.string,
+    insertImage: PropTypes.shape({
+        signImg: PropTypes.string,
         x: PropTypes.number,
         y: PropTypes.number,
     }),
 };
 
-export default function PdfViewer({ path, setPdfPosition, imageData }) {
+export default function PdfViewer({ path, setPdfPosition, insertImage }) {
     const canvasRef = useRef();
-    const containerRef = useRef();  // Crear una referencia para el contenedor
+    const containerRef = useRef();
     pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('../../../node_modules/pdfjs-dist/build/pdf.worker.min.js', import.meta.url);
 
     useEffect(() => {
@@ -44,18 +45,19 @@ export default function PdfViewer({ path, setPdfPosition, imageData }) {
                 renderTask.promise.then(() => {
                     console.log('Page rendered');
 
-                    // Imprimir la posición del PDF después de renderizar
                     setPdfPosition({
                         x: containerRef.current.offsetLeft,
                         y: containerRef.current.offsetTop
                     });
 
-                    if (imageData) {
+                    if (insertImage) {
                         const img = new Image();
                         img.onload = function () {
-                            context.drawImage(imageData.src, imageData.x, imageData.y);
+                            context.drawImage(img, insertImage.x, insertImage.y);
+                            // Una vez que la imagen se ha cargado y dibujado en el canvas, crea el PDF
+                            // createPdfFromCanvas(canvas);
                         };
-                        img.src = imageData.src;
+                        img.src = insertImage.signImg;
                     }
 
                 });
@@ -64,10 +66,27 @@ export default function PdfViewer({ path, setPdfPosition, imageData }) {
             console.error(reason);
         });
 
-    }, [path]);
+    }, [path, insertImage]);
+
+    const createPdfFromCanvas = (canvas) => {
+        const pdf = new jsPDF('p', 'mm', [canvas.width, canvas.height]);
+
+        const imgData = canvas.toDataURL("image/png");
+
+        // Convertir las coordenadas del navegador a las del PDF
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+
+        // Escalar la imagen para que se ajuste al PDF
+        const ratio = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
+
+        pdf.addImage(imgData, "PNG", 0, 0, canvas.width * ratio, canvas.height * ratio);
+
+        pdf.save("output.pdf");
+    };
 
     return (
-        <div ref={containerRef}> 
+        <div ref={containerRef}>
             <canvas ref={canvasRef} />
         </div>
     );
