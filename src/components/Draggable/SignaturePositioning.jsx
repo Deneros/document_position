@@ -1,4 +1,10 @@
 import styled from 'styled-components';
+import PropTypes from "prop-types";
+
+
+SignatureComponent.propTypes = {
+  name: PropTypes.string,
+};
 
 const SignatureContainer = styled.div`
   display: flex;
@@ -6,10 +12,9 @@ const SignatureContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 150px;
-  height: 50px;
-  border: 2px solid #000;
-  border-radius: 5px;
-  background: #fff;
+  height: 40px;
+  border: 2px dashed #000;
+  background: transparent;
   color: #000;
 `;
 
@@ -18,10 +23,10 @@ const SignatureText = styled.span`
   font-weight: bold;
 `;
 
-function SignatureComponent() {
+function SignatureComponent({name}) {
   return (
     <SignatureContainer>
-      <SignatureText>My Signature</SignatureText>
+      <SignatureText>{name}</SignatureText>
     </SignatureContainer>
   );
 }
