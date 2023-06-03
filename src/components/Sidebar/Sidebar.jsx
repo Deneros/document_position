@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 
 
 Sidebar.propTypes = {
-    draggableComponents: PropTypes.array,
-    handleStop: PropTypes.func,
+  draggableComponents: PropTypes.any,
+  handleStop: PropTypes.func,
 };
 
 
@@ -38,14 +38,14 @@ const SidebarMenuItem = styled.li`
   cursor: pointer;
 `;
 
-export default function Sidebar({ draggableComponents = [], handleStop }) {
+export default function Sidebar({ draggableComponents = [] }) {
   return (
     <SidebarContainer>
       <SidebarMenu>
-        {draggableComponents.map((Component, index) => (
+        {draggableComponents.map(({ component: Component, props, handleStop }, index) => (
           <Draggable key={index} onStop={handleStop}>
             <SidebarMenuItem>
-              <Component />
+              <Component {...props} />
             </SidebarMenuItem>
           </Draggable>
         ))}
