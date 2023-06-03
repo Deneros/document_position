@@ -1,7 +1,7 @@
+import jsPDF from "jspdf";
 import { useEffect, useRef } from 'react';
 import * as pdfjsLib from "pdfjs-dist";
 import PropTypes from "prop-types";
-import jsPDF from "jspdf";
 
 PdfViewer.propTypes = {
     path: PropTypes.string,
@@ -13,7 +13,7 @@ PdfViewer.propTypes = {
     }),
 };
 
-export default function PdfViewer({ path, setPdfPosition, insertImage }) {
+export default function PdfViewer({ path, insertImage }) {
     const canvasRef = useRef();
     const containerRef = useRef();
     pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('../../../node_modules/pdfjs-dist/build/pdf.worker.min.js', import.meta.url);
@@ -22,11 +22,11 @@ export default function PdfViewer({ path, setPdfPosition, insertImage }) {
         const loadingTask = pdfjsLib.getDocument(path);
 
         loadingTask.promise.then((pdf) => {
-            console.log('PDF loaded');
+            // console.log('PDF loaded');
 
             const pageNum = 1;
             pdf.getPage(pageNum).then((page) => {
-                console.log('Page loaded');
+                // console.log('Page loaded');
 
                 const scale = 1.5;
                 const viewport = page.getViewport({ scale });
@@ -43,19 +43,21 @@ export default function PdfViewer({ path, setPdfPosition, insertImage }) {
                 };
                 const renderTask = page.render(renderContext);
                 renderTask.promise.then(() => {
-                    console.log('Page rendered');
+                    // console.log('Page rendered');
 
-                    setPdfPosition({
-                        x: containerRef.current.offsetLeft,
-                        y: containerRef.current.offsetTop
-                    });
+                    // setPdfPosition({
+                    //     x: containerRef.current.offsetLeft,
+                    //     y: containerRef.current.offsetTop
+                    // });
 
                     if (insertImage) {
                         const img = new Image();
+                        const desiredWidth = 100;
+                        const desiredHeight = 50;
+
                         img.onload = function () {
-                            context.drawImage(img, insertImage.x, insertImage.y);
-                            // Una vez que la imagen se ha cargado y dibujado en el canvas, crea el PDF
-                            // createPdfFromCanvas(canvas);
+                            context.drawImage(img, insertImage.x, insertImage.y, desiredWidth, desiredHeight);
+                            createPdfFromCanvas(canvas);
                         };
                         img.src = insertImage.signImg;
                     }
@@ -85,9 +87,15 @@ export default function PdfViewer({ path, setPdfPosition, insertImage }) {
         pdf.save("output.pdf");
     };
 
+
+
     return (
-        <div ref={containerRef}>
+        <div ref={containerRef} id='pdfContainer'>
             <canvas ref={canvasRef} />
         </div>
     );
 }
+
+
+
+
