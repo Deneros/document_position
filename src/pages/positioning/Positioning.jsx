@@ -16,7 +16,30 @@ export default function Positioning() {
     const [insertImage, setInsertImage] = useState(null);
     // const [pdf, setPdf] = useState(null);
 
+    const handleSendData = async () => {
+        const url = 'https://tuapi.com/enviar_datos'; // Replace with your API URL
 
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(draggedItems)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // Do something with the response if necessary
+            console.log(data);
+        } catch (error) {
+            console.error('Error sending data', error);
+        }
+    };
 
     const handleStop = (event, data, name) => {
         // Obtén la posición del elemento que contiene tu PDF
@@ -35,7 +58,7 @@ export default function Positioning() {
     useEffect(() => {
         console.log(draggedItems);
     }, [draggedItems])
-    
+
 
     return (
         <>
@@ -51,6 +74,8 @@ export default function Positioning() {
                 />
             </div>
             <PdfViewer path={pdf} insertImage={insertImage}></PdfViewer>
+            <button onClick={handleSendData}>Enviar datos</button>
+
         </>
     )
 }
