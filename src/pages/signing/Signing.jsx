@@ -15,14 +15,14 @@ const PdfContainer = styled.div`
 const signers = [
     {
         id:2412314,
-        name: "Nicolas Velez",
+        name: "Asdrubal Gervacio",
         x: 200,
         y: 300,
         signImg:""
     },
     {
         id:3439283,
-        name: "Sachat Quintero",
+        name: "Usnabi Ocoro Carabali",
         x: 500,
         y: 700,
         signImg:""

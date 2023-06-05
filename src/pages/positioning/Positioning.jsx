@@ -6,14 +6,14 @@ import SignatureComponent from "../../components/Draggable/SignaturePositioning"
 // import {useFetch} from '../../hooks/useFetch';
 
 import pdf from '../../assets/document/testing.pdf';
-import img from '../../assets/img/grafofirma.png';
+// import img from '../../assets/img/grafofirma.png';
 
 
 
 export default function Positioning() {
-    const data = [{ name: 'Nico chulo' }, { name: 'Papi Pepa' }];
+    const data = [{ name: 'Asdrubal Gervacio' }, { name: 'Usnabi Ocoro Carabali' }];
     const [draggedItems, setDraggedItems] = useState([]);
-    const [insertImage, setInsertImage] = useState(null);
+    // const [insertImage, setInsertImage] = useState(null);
     // const [pdf, setPdf] = useState(null);
 
     const handleSendData = async () => {
@@ -72,7 +72,7 @@ export default function Positioning() {
                     }
                 />
             </div>
-            <PdfViewer path={pdf} insertImage={insertImage}></PdfViewer>
+            <PdfViewer path={pdf} ></PdfViewer>
             <button onClick={handleSendData}>Enviar datos</button>
 
         </>
