@@ -17,8 +17,7 @@ export default function Positioning() {
     // const [pdf, setPdf] = useState(null);
 
     const handleSendData = async () => {
-        const url = 'https://tuapi.com/enviar_datos'; // Replace with your API URL
-
+        const url = 'https://tuapi.com/enviar_datos'; 
         try {
             const response = await fetch(url, {
                 method: 'POST',
