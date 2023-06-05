@@ -43,25 +43,47 @@ export default function PdfViewer({ path, insertImage }) {
                 };
                 const renderTask = page.render(renderContext);
                 renderTask.promise.then(() => {
-                    // console.log('Page rendered');
-
-                    // setPdfPosition({
-                    //     x: containerRef.current.offsetLeft,
-                    //     y: containerRef.current.offsetTop
-                    // });
-
                     if (insertImage) {
-                        const img = new Image();
-                        const desiredWidth = 100;
-                        const desiredHeight = 50;
+                        for (const image of insertImage) {
+                            const img = new Image();
+                            const desiredWidth = 200;
+                            const desiredHeight = 100;
 
-                        img.onload = function () {
-                            context.drawImage(img, insertImage.x, insertImage.y, desiredWidth, desiredHeight);
-                            createPdfFromCanvas(canvas);
-                        };
-                        img.src = insertImage.signImg;
+                            img.onload = function () {
+                                context.drawImage(img, image.x, image.y, desiredWidth, desiredHeight);
+                                const base64Pdf = createPdfFromCanvas(canvas);
+
+                                // Aquí, solo intenta hacer el POST si signImg existe y no es una cadena vacía
+                                if (image.signImg) {
+                                    fetch('https://your-api-url.com/endpoint', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ pdf: base64Pdf }),
+                                    })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            console.log('Success:', data);
+                                        })
+                                        .catch((error) => {
+                                            console.error('Error:', error);
+                                        });
+                                }
+                            };
+                            // Aquí, si signImg existe y no es una cadena vacía, entonces establece img.src
+                            // Si no, maneja el caso de signImg vacía como desees.
+                            if (image.signImg) {
+                                img.src = image.signImg;
+                            } else {
+                                // Maneja el caso de signImg vacía aquí
+                                // Por ejemplo, puedes mostrar el nombre del firmante como texto.
+                                context.font = "20px Arial";
+                                context.fillText(image.name, image.x, image.y);
+                                createPdfFromCanvas(canvas);
+                            }
+                        }
                     }
-
                 });
             });
         }, (reason) => {
@@ -72,19 +94,17 @@ export default function PdfViewer({ path, insertImage }) {
 
     const createPdfFromCanvas = (canvas) => {
         const pdf = new jsPDF('p', 'mm', [canvas.width, canvas.height]);
-
         const imgData = canvas.toDataURL("image/png");
-
-        // Convertir las coordenadas del navegador a las del PDF
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
-
-        // Escalar la imagen para que se ajuste al PDF
         const ratio = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
 
         pdf.addImage(imgData, "PNG", 0, 0, canvas.width * ratio, canvas.height * ratio);
 
-        pdf.save("output.pdf");
+        const base64Image = pdf.output('datauristring');
+        // pdf.save("/src/assets/testing.pdf");
+
+        return base64Image;
     };
 
 
