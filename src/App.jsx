@@ -1,19 +1,17 @@
 import './App.css'
-// import PdfViewer from './components/Canvas/Canvas'
-// import SignatureComponent from './components/Draggable/SignaturePositioning'
-// import Sidebar from './components/Sidebar/Sidebar'
-// import pdf from '../src/assets/document/testing.pdf'
-import Positioning from './pages/positioning/Positioning'
+import { Routes, Route } from "react-router-dom";
+import Positioning from './pages/Positioning/Positioning';
+import Signing from './pages/Signing/Signing';
 
 function App() {
+  // <Signing></Signing>
 
   return (
     <>
-      <Positioning></Positioning>
-      {/* <div>
-        <Sidebar draggableComponents={[SignatureComponent]} />
-      </div>
-      <PdfViewer path={pdf}></PdfViewer> */}
+      <Routes>
+        <Route element={<Signing />} path="/signing"></Route>
+        <Route element={<Positioning />} path="/positioning" />
+      </Routes>
     </>
   )
 }
